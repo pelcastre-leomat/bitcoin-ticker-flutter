@@ -1,6 +1,7 @@
 import 'dart:io' show Platform;
 
 import 'package:bitcoin_ticker/coin_data.dart';
+import 'package:bitcoin_ticker/services/ticker_retriever.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +12,7 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
   String selectedCurrency = "USD";
+  TickerRetriever tickerRetriever = TickerRetriever();
 
   DropdownButton<String> androidDropdown(){
     List<DropdownMenuItem<String>> dropdownMenuItems = [];
@@ -26,6 +28,8 @@ class _PriceScreenState extends State<PriceScreen> {
       value: selectedCurrency,
       items: dropdownMenuItems,
       onChanged: (value){
+        //TODO Fix reading from json server
+        tickerRetriever.getPrice("BTC", "USD");
         setState(() {
           selectedCurrency = value!;
         });
