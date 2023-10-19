@@ -11,10 +11,23 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
-  String selectedCurrency = "USD";
   TickerRetriever tickerRetriever = TickerRetriever();
+  double price = 0;
 
-  DropdownButton<String> androidDropdown(){
+  @override
+  void initState() {
+    updateUI("USD");
+    super.initState();
+  }
+  String selectedCurrency = "USD";
+
+  void updateUI(String currency) async{
+    var response_rate = await tickerRetriever.getPrice("ETH", currency);
+    price = response_rate["rate"];
+    print(price);
+  }
+  
+  DropdownButton<String> androidDropdown() {
     List<DropdownMenuItem<String>> dropdownMenuItems = [];
     for(String currency in currenciesList){
       var newItem = DropdownMenuItem<String>(
@@ -28,10 +41,9 @@ class _PriceScreenState extends State<PriceScreen> {
       value: selectedCurrency,
       items: dropdownMenuItems,
       onChanged: (value){
-        //TODO Fix reading from json server
-        tickerRetriever.getPrice("BTC", "USD");
         setState(() {
           selectedCurrency = value!;
+          updateUI(selectedCurrency);
         });
       },
     );
@@ -72,7 +84,7 @@ class _PriceScreenState extends State<PriceScreen> {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
                 child: Text(
-                  '1 BTC = ? USD',
+                  '1 BTC = ${price.toStringAsPrecision(5)} $selectedCurrency',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20.0,
