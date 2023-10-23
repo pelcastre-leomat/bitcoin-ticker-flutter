@@ -74,7 +74,7 @@ class AssetCardWidget extends StatelessWidget {
     return Container(
       width: width ?? null,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(30),
         color: color,
       ),
       child: Padding(
