@@ -1,5 +1,6 @@
 import 'package:bitcoin_ticker/price_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show SystemChrome,SystemUiMode,DeviceOrientation;
 
 class PriceScreenRedesign extends StatefulWidget {
   const PriceScreenRedesign({Key? key}) : super(key: key);
@@ -9,6 +10,14 @@ class PriceScreenRedesign extends StatefulWidget {
 }
 
 class _PriceScreenRedesignState extends State<PriceScreenRedesign> {
+
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +37,7 @@ class _PriceScreenRedesignState extends State<PriceScreenRedesign> {
                 width: double.infinity,
               ),
               SizedBox(
-                height: 20,
+                height: 10,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
