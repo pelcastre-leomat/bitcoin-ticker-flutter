@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 
+import 'package:bitcoin_ticker/Components/android_dropdown.dart';
 import 'package:bitcoin_ticker/coin_data.dart';
 import 'package:bitcoin_ticker/services/ticker_retriever.dart';
 import 'package:flutter/cupertino.dart';
@@ -28,33 +29,6 @@ class _PriceScreenState extends State<PriceScreen> {
       var responseRate = await tickerRetriever.getPrice(asset, currency);
       assetPriceList[asset] = responseRate["rate"].round();
     }
-
-    setState(() {
-      assetPriceList;
-      price = 20;
-    });
-  }
-  
-  DropdownButton<String> androidDropdown() {
-    List<DropdownMenuItem<String>> dropdownMenuItems = [];
-    for(String currency in currenciesList){
-      var newItem = DropdownMenuItem<String>(
-        value: currency,
-        child: Text(currency),
-      );
-      dropdownMenuItems.add(newItem);
-    }
-
-    return DropdownButton<String>(
-      value: selectedCurrency,
-      items: dropdownMenuItems,
-      onChanged: (value){
-        setState(() {
-          selectedCurrency = value!;
-          updateUI(selectedCurrency);
-        });
-      },
-    );
   }
 
   CupertinoPicker iOSPicker(){
@@ -66,8 +40,10 @@ class _PriceScreenState extends State<PriceScreen> {
 
       itemExtent: 32,
       onSelectedItemChanged: (selectedIndex){
-        selectedCurrency = pickerItems[selectedIndex].data ?? "";
-        updateUI(selectedCurrency);
+        setState(() {
+          selectedCurrency = pickerItems[selectedIndex].data ?? "";
+          updateUI(selectedCurrency);
+        });
       },
       children:pickerItems,
     );
@@ -102,7 +78,16 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: const EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: Platform.isAndroid ? iOSPicker():androidDropdown(),
+            child: Platform.isAndroid ? iOSPicker():AndroidDropDown(
+              onChanged: (value){
+                setState(() {
+                  selectedCurrency = value;
+                  updateUI(value);
+                });
+              },
+              currenciesList: currenciesList,
+              selectedCurrency: selectedCurrency,
+            ),
           ),
         ],
       ),
