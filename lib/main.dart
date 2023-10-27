@@ -16,7 +16,8 @@ class MyApp extends StatelessWidget {
               color: Colors.black
             )
           ),
-          scaffoldBackgroundColor: Colors.white),
+          scaffoldBackgroundColor: Colors.white
+      ),
       home: PriceScreenRedesign(),
     );
   }

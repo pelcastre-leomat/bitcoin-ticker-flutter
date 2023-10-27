@@ -32,6 +32,21 @@ class _PriceScreenRedesignState extends State<PriceScreenRedesign> {
           ),
           child: Column(
             children: [
+              Container(
+                alignment: Alignment.topLeft,
+                child: const Text(
+                  "Crypto Tracker",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 40,
+              ),
+              //TODO Expanded, flex, this section into middle of screen.
               AssetCardWidget(
                 color: Colors.pink,
                 price: 2,
@@ -63,20 +78,28 @@ class _PriceScreenRedesignState extends State<PriceScreenRedesign> {
                   ),
                 ],
               ),
-              Container(
-                width: 100,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Colors.white,
-                ),
-                child: AndroidDropDown(
-                    onChanged: (value){
-                      setState(() {
-                        selectedCurrency = value;
-                      });
-                    },
-                    currenciesList: currenciesList,
-                    selectedCurrency: selectedCurrency,
+              Expanded(
+                flex: 3,
+                child: Container(
+                  alignment: Alignment.bottomCenter,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 20,
+                  ),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.white,
+                  ),
+                  child: AndroidDropDown(
+                      onChanged: (value){
+                        setState(() {
+                          selectedCurrency = value;
+                        });
+                      },
+                      currenciesList: currenciesList,
+                      selectedCurrency: selectedCurrency,
+                  ),
                 ),
               ),
             ],

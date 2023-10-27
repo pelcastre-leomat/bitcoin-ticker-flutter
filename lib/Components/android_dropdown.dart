@@ -20,10 +20,9 @@ class AndroidDropDown extends StatelessWidget {
       dropdownMenuItems.add(newItem);
     }
     return DropdownButton<String>(
-      isExpanded: true,
       value: selectedCurrency,
       alignment: Alignment.center,
-      menuMaxHeight: 200,
+      menuMaxHeight: 300,
       dropdownColor: Color(0xffffffff),
       borderRadius: BorderRadius.circular(20),
       style: TextStyle(
@@ -31,7 +30,6 @@ class AndroidDropDown extends StatelessWidget {
       ),
       items: dropdownMenuItems,
       onChanged: (value){
-        //TODO update UI
         onChanged(value);
       });
     }
