@@ -1,9 +1,11 @@
 import 'package:bitcoin_ticker/Components/android_dropdown.dart';
 import 'package:bitcoin_ticker/price_screen.dart';
+import 'package:bitcoin_ticker/services/ticker_retriever.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show SystemChrome,SystemUiMode,DeviceOrientation;
 
 import 'coin_data.dart';
+import 'constants.dart';
 
 class PriceScreenRedesign extends StatefulWidget {
   const PriceScreenRedesign({Key? key}) : super(key: key);
@@ -14,12 +16,38 @@ class PriceScreenRedesign extends StatefulWidget {
 
 class _PriceScreenRedesignState extends State<PriceScreenRedesign> {
   String selectedCurrency = currenciesList[0];
+  TickerRetriever tickerRetriever = TickerRetriever();
+  Map<String, int> assetPriceList = {};
+  String biggestCrypto = cryptoList[0];
+
 
   @override
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    updateUI();
+  }
+
+  void sortMAP(){
+    List<MapEntry<String,int>> listMappedEntries = assetPriceList.entries.toList();
+    // print(assetPriceList);
+    listMappedEntries.sort((b,a)=> a.value.compareTo(b.value));
+    assetPriceList = Map.fromEntries(listMappedEntries);
+    // print(assetPriceList);
+  }
+
+  void updateUI() async{
+    for(String asset in cryptoMap.keys){
+      var responseRate = await tickerRetriever.getPrice(asset, selectedCurrency);
+
+      setState(() {
+        assetPriceList[asset] = responseRate["rate"].round();
+      });
+    }
+    sortMAP();
+    biggestCrypto = assetPriceList.keys.first;
+    print(biggestCrypto);
   }
 
   @override
@@ -33,75 +61,62 @@ class _PriceScreenRedesignState extends State<PriceScreenRedesign> {
           child: Column(
             children: [
               Container(
-                alignment: Alignment.topLeft,
-                child: const Text(
-                  "Crypto Tracker",
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.w600,
-                  ),
+                width: double.infinity,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Crypto Tracker",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                      child: AndroidDropDown(
+                        onChanged: (value){
+                          setState(() {
+                            selectedCurrency = value;
+                            updateUI();
+                          });
+                        },
+                        currenciesList: currenciesList,
+                        selectedCurrency: selectedCurrency,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 40,
               ),
-              //TODO Expanded, flex, this section into middle of screen.
-              AssetCardWidget(
-                color: Colors.pink,
-                price: 2,
-                fiat: selectedCurrency,
-                assetIcon: "icons/ltc.png",
-                asset: "LTC",
-                width: double.infinity,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //TODO Move entire column down to bottom half of screen?
+              Column(
                 children: [
-                  AssetCardWidget(
-                    asset: "ETH",
-                    assetIcon: "icons/eth.png",
-                    fiat: selectedCurrency,
-                    price: 17272,
-                    color: Color(0xffafc0ff),
+                  AssetCardWidget(width: double.infinity,price: assetPriceList[biggestCrypto], fiat: selectedCurrency, asset: biggestCrypto, color: cryptoMap[biggestCrypto]),
+                  SizedBox(
+                    height: 10,
                   ),
-                  AssetCardWidget(
-                    asset: "BTC",
-                    assetIcon: "icons/btc.png",
-                    fiat: selectedCurrency,
-                    price: 2020,
-                    color: Color(0xffecff78),
 
+                  //TODO Break it up for arbitrary-ish number of tiles
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      for(String asset in assetPriceList.keys.skip(1))
+                        AssetCardWidget(price: assetPriceList[asset], fiat: selectedCurrency, asset: asset, color: cryptoMap[asset],)
+                    ],
                   ),
                 ],
               ),
-              Expanded(
-                flex: 3,
-                child: Container(
-                  alignment: Alignment.bottomCenter,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 20,
-                  ),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.white,
-                  ),
-                  child: AndroidDropDown(
-                      onChanged: (value){
-                        setState(() {
-                          selectedCurrency = value;
-                        });
-                      },
-                      currenciesList: currenciesList,
-                      selectedCurrency: selectedCurrency,
-                  ),
-                ),
-              ),
+
+              //TODO Make a proper button
+              TextButton(
+                onPressed: (){
+                  updateUI();
+                },
+                child: Text("Reload"))
             ],
           ),
         ),
@@ -111,14 +126,13 @@ class _PriceScreenRedesignState extends State<PriceScreenRedesign> {
 }
 
 class AssetCardWidget extends StatelessWidget {
-  String assetIcon;
-  int price;
+  int? price;
   String asset;
   String fiat;
-  Color color;
+  Color? color;
   double? width;
 
-  AssetCardWidget({super.key, required this.assetIcon,required this.price,
+  AssetCardWidget({super.key, required this.price,
     required this.asset, required this.fiat, required this.color, this.width});
 
 
@@ -138,7 +152,7 @@ class AssetCardWidget extends StatelessWidget {
         child: Column(
           children: [
             ImageIcon(
-              AssetImage(assetIcon),
+              AssetImage("icons/${asset.toLowerCase()}.png"),
               size: 60,
               color: Colors.black,
             ),
@@ -167,3 +181,13 @@ class AssetCardWidget extends StatelessWidget {
     );
   }
 }
+
+
+
+// AssetCardWidget(
+// color: Colors.pink,
+// price: 2,
+// fiat: selectedCurrency,
+// asset: "LTC",
+// width: double.infinity,
+// ),

@@ -15,18 +15,19 @@ class AndroidDropDown extends StatelessWidget {
     for (String currency in currenciesList) {
       var newItem = DropdownMenuItem<String>(
         value: currency,
+        //Todo BoxConstraints?
         child: Text(currency),
       );
       dropdownMenuItems.add(newItem);
     }
     return DropdownButton<String>(
       value: selectedCurrency,
-      alignment: Alignment.center,
       menuMaxHeight: 300,
+
       dropdownColor: Color(0xffffffff),
       borderRadius: BorderRadius.circular(20),
       style: TextStyle(
-        color: Colors.black
+        color: Colors.black,
       ),
       items: dropdownMenuItems,
       onChanged: (value){
