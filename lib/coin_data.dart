@@ -34,9 +34,9 @@ const List<String> cryptoList = [
 ];
 
 Map<String,Color> cryptoMap = {
-  'BTC':Color(0xffffee79),
-  'ETH':Color(0xff8257f3),
-  'LTC':Color(0xff6464fc),
+  'BTC':const Color(0xffffef9a),
+  'ETH':const Color(0xffbc7ffd),
+  'LTC':const Color(0xff7f8af3),
 };
 
 class CoinData {}

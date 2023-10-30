@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 class AndroidDropDown extends StatelessWidget {
   final Function onChanged;
@@ -15,7 +14,6 @@ class AndroidDropDown extends StatelessWidget {
     for (String currency in currenciesList) {
       var newItem = DropdownMenuItem<String>(
         value: currency,
-        //Todo BoxConstraints?
         child: Text(currency),
       );
       dropdownMenuItems.add(newItem);
@@ -24,9 +22,9 @@ class AndroidDropDown extends StatelessWidget {
       value: selectedCurrency,
       menuMaxHeight: 300,
 
-      dropdownColor: Color(0xffffffff),
+      dropdownColor: Colors.white,
       borderRadius: BorderRadius.circular(20),
-      style: TextStyle(
+      style: const TextStyle(
         color: Colors.black,
       ),
       items: dropdownMenuItems,

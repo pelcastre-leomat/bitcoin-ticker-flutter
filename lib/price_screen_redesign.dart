@@ -1,5 +1,4 @@
 import 'package:bitcoin_ticker/Components/android_dropdown.dart';
-import 'package:bitcoin_ticker/price_screen.dart';
 import 'package:bitcoin_ticker/services/ticker_retriever.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show SystemChrome,SystemUiMode,DeviceOrientation;
@@ -47,7 +46,6 @@ class _PriceScreenRedesignState extends State<PriceScreenRedesign> {
     }
     sortMAP();
     biggestCrypto = assetPriceList.keys.first;
-    print(biggestCrypto);
   }
 
   @override
@@ -60,7 +58,7 @@ class _PriceScreenRedesignState extends State<PriceScreenRedesign> {
           ),
           child: Column(
             children: [
-              Container(
+              SizedBox(
                 width: double.infinity,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -68,10 +66,7 @@ class _PriceScreenRedesignState extends State<PriceScreenRedesign> {
                     const Text(
                       "Crypto Tracker",
                       textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: kAppTitleStyle,
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
@@ -92,14 +87,12 @@ class _PriceScreenRedesignState extends State<PriceScreenRedesign> {
               const SizedBox(
                 height: 40,
               ),
-              //TODO Move entire column down to bottom half of screen?
               Column(
                 children: [
                   AssetCardWidget(width: double.infinity,price: assetPriceList[biggestCrypto], fiat: selectedCurrency, asset: biggestCrypto, color: cryptoMap[biggestCrypto]),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
-
                   //TODO Break it up for arbitrary-ish number of tiles
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -111,12 +104,37 @@ class _PriceScreenRedesignState extends State<PriceScreenRedesign> {
                 ],
               ),
 
-              //TODO Make a proper button
-              TextButton(
-                onPressed: (){
-                  updateUI();
-                },
-                child: Text("Reload"))
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        width: 150,
+                        height: 70,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(40),
+                          color: kReloadButtonColor,
+                        ),
+                        child: TextButton(
+                          onPressed: (){
+                            updateUI();
+                          },
+                          child: Text(
+                              "refresh".toUpperCase(),
+                            style: kReloadButtonStyle ,
+                          )
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
             ],
           ),
         ),
@@ -156,24 +174,19 @@ class AssetCardWidget extends StatelessWidget {
               size: 60,
               color: Colors.black,
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Text(
               "$asset/$fiat",
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 20
-              ),
+              style: kAssetFiatLabelStyle,
             ),
-            SizedBox(
+            const SizedBox(
               height: 5,
             ),
             Text(
               "$price",
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-              ),
+              style: kPriceLabelStyle,
             ),
           ],
         ),
@@ -181,13 +194,3 @@ class AssetCardWidget extends StatelessWidget {
     );
   }
 }
-
-
-
-// AssetCardWidget(
-// color: Colors.pink,
-// price: 2,
-// fiat: selectedCurrency,
-// asset: "LTC",
-// width: double.infinity,
-// ),
